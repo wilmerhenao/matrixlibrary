@@ -40,11 +40,19 @@ int main(){
 
   Matrix<double> ddouble(md, n, n);
   Matrix<dd_real> qdouble(mq, n, n);
+  Matrix<double> resdouble(n, n);
+  Matrix<dd_real> resq(n, n);
 
   //print(md);
   //print(mq);
   ddouble.print();
   qdouble.print();
+
+  matrixMultiply(ddouble, ddouble, resdouble);
+  matrixMultiply(qdouble, qdouble, resq);
+
+  resdouble.print();
+  resq.print();
 
   delete [] md;
   delete [] mq;

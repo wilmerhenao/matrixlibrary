@@ -333,7 +333,6 @@ void bfgssolver(Matrix<T>& A, Matrix<T>& B, Matrix<T>& x){
 
 template<typename T>
 void matrixMultiplywithPadding(Matrix<T>& A, Matrix<T>& B, Matrix<T>& C, 
-
 			       char transA = 'N', char transB = 'N'){
   /*  Multiplies A * B = C */
   
@@ -505,6 +504,71 @@ void matrixMultiply(Matrix<T>& A, Matrix<T>& B, Matrix<T>& C, char transA = 'N',
       std::cerr << "B.n: " << B.n << " C.n: " << C.n << std::endl;
     }
   }
+  for (int i = 0; i < C.m; i++){
+    for(int j = 0; j < C.n; j++){
+      for(int k = 0; k < A.n; k++){
+	C(i,j) += A(i, k) * B(k, j);
+      }
+    }
+  }
+}
+
+template<>
+void matrixMultiply<double>(Matrix<double>& A, Matrix<double>& B, Matrix<double>& C, 
+			    char transA, char transB){
+  /*  Multiplies A * B = C */
+  
+  // Perform some basic checks (dependent on transA and transB)
+  
+  if('N' == transA && 'N' == transB){
+    if(A.n != B.m)
+      std::cerr << "Matrix Dimensions for the multiplicating matrix  do not agree" <<
+	std::endl;
+    if(A.m != C.m){
+      std::cerr << "Size m of the result matrix is wrong" << std::endl;
+      std::cerr << "A.m: " << A.m << " C.m: " << C.m << std::endl;
+    }
+    if(B.n != C.n){
+      std::cerr << "Size n of the result matrix is wrong" << std::endl;
+      std::cerr << "B.n: " << B.n << " C.n: " << C.n << std::endl;
+    }
+  } else if('T' == transA && 'N' == transB){
+    if(A.m != B.m)
+      std::cerr << "Matrix Dimensions for the multiplicating matrix  do not agree" <<
+	std::endl;
+    if(A.n != C.m){
+      std::cerr << "Size m of the result matrix is wrong" << std::endl;
+      std::cerr << "A.n: " << A.n << " C.m: " << C.m << std::endl;
+    }
+    if(B.n != C.n){
+      std::cerr << "Size n of the result matrix is wrong" << std::endl;
+      std::cerr << "B.n: " << B.n << " C.n: " << C.n << std::endl;
+    }
+  } else if('N' == transA && 'T' == transB){
+    if(A.n != B.n)
+      std::cerr << "Matrix Dimensions for the multiplicating matrix  do not agree" <<
+	std::endl;
+    if(A.m != C.m){
+      std::cerr << "Size m of the result matrix is wrong" << std::endl;
+      std::cerr << "A.m: " << A.m << " C.m: " << C.m << std::endl;
+    }
+    if(B.m != C.n){
+      std::cerr << "Size n of the result matrix is wrong" << std::endl;
+      std::cerr << "B.m: " << B.m << " C.n: " << C.n << std::endl;
+    }
+  } else if('T' == transA && 'N' == transB){
+    if(A.m != B.m)
+      std::cerr << "Matrix Dimensions for the multiplicating matrix  do not agree" <<
+	std::endl;
+    if(A.n != C.m){
+      std::cerr << "Size m of the result matrix is wrong" << std::endl;
+      std::cerr << "A.n: " << A.n << " B.m: " << B.m << std::endl;
+    }
+    if(B.n != C.n){
+      std::cerr << "Size n of the result matrix is wrong" << std::endl;
+      std::cerr << "B.n: " << B.n << " C.n: " << C.n << std::endl;
+    }
+  }
   
   // declare some local variables so that external variables do not get destroyed
   // Will make local copies of A and B.  This may sound like a waste of time.  But
@@ -619,7 +683,6 @@ void Matrix<T>::matrixInverse(){
   int* IPIV = new int[n];
   int INFO;
     
-
   dgetrf_(&N, &N, tmatrix, &N, IPIV, &INFO);
   dgetri_(&N, tmatrix, &N, IPIV, WORK, &LWORK, &INFO);
 
